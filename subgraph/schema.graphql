@@ -1,0 +1,15 @@
+type PriceUpdate @entity(immutable: true) {
+  id: ID!
+  asset: Bytes!
+  price: BigInt!
+  timestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OwnershipTransfer @entity(immutable: true) {
+  id: ID!
+  previousOwner: Bytes!
+  newOwner: Bytes!
+  timestamp: BigInt!
+  transactionHash: Bytes!
+}

@@ -1,0 +1,32 @@
+{
+  "name": "hedera-graph-indexing-demo",
+  "version": "1.0.0",
+  "description": "Hedera Graph Indexing Demo",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "deploy": "ts-node scripts/deploy.ts",
+    "update": "ts-node scripts/update.ts",
+    "query": "ts-node scripts/query-history.ts"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.68.0",
+    "@graphprotocol/graph-ts": "^0.31.0",
+    "@hashgraph/sdk": "^2.66.0",
+    "dotenv": "^16.5.0",
+    "graphql": "^16.11.0",
+    "graphql-request": "^6.1.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/node-fetch": "^2.6.12",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
