@@ -54,19 +54,22 @@ Scripts are supporting:
 - Docker and Docker Compose
 - Hedera testnet account
 - Solidity compiler installed
+- An account with ECDSA private key on Hedera Testnet (accounts with ED25519 keys are not EVM compatibile)
 
-#### Initialize the project and install dependencies:
+#### Install project dependencies:
 ```bash
-npm init -y
 npm install
 ```
 
 #### Configure your environment:
 ```bash
 cp .env.example .env
-# Edit .env with your credentials:
-HEDERA_OPERATOR_ID=your_account_id
-HEDERA_OPERATOR_KEY=your_private_key
+```
+Edit .env with your credentials:
+```
+HEDERA_OPERATOR_ID=[Your Hedera testnet account ID]
+HEDERA_OPERATOR_KEY=[Your account's HEX Encoded Private Key]
+CONTRACT_ID=[this will be edited after deploying the contract]
 ```
 
 #### Build the contract and generatie ABI file
@@ -82,14 +85,28 @@ npm run deploy
 
 This will:
 - Deploy the contract to Hedera testnet
-- Save the contract ID to the `.env` file
 - Update the subgraph configuration with the new contract address
+- Provide the contract ID to be copied to the `.env` file
+
+#### Add the deployed contract id to your environment:
+Edit .env file:
+```
+HEDERA_OPERATOR_ID=[Your Hedera testnet account ID]
+HEDERA_OPERATOR_KEY=[Your account's HEX Encoded Private Key]
+CONTRACT_ID=[Contract ID provided by deploy.ts in the previous step]
+```
 
 
 #### Start the local Graph Node:
+First, remove the .keep file from posdtgres data directory, as postgres requires a clean directory to initialize
+```bash
+rm graph-node/data/postgres/.keep
+```
+
+Then run the node
 ```bash
 cd graph-node
-docker-compose up -d
+docker compose up -d
 cd ..
 ```
 You can confirm, that the node is up by looking into docker logs and check indexing status using http://localhost:8030/graphql/playground
@@ -97,17 +114,17 @@ You can confirm, that the node is up by looking into docker logs and check index
 #### Deploy the subgraph
 Copy the contract's ABI file:
 ```bash
-cp ../contracts/abi/PriceFeed.abi subgraph/abis/
+cp contracts/abi/PriceFeed.abi subgraph/abis/
 ```
 
 Deploy the subgraph:
 ```bash
 cd subgraph
-graph create hedera-pricefeed-test
-graph codegen
-graph build
-graph deploy hedera-pricefeed-test --node http://localhost:8020 --ipfs http://localhost:5001
-cd ../
+npx graph codegen
+npx graph build
+npx graph create --node http://localhost:8020 hedera-pricefeed-test
+npx graph deploy --node http://localhost:8020 --ipfs http://localhost:5001 hedera-pricefeed-test
+cd ..
 ```
 
 ## Usage

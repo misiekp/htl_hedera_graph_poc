@@ -6,9 +6,9 @@ dataSources:
     name: PriceFeed
     network: hedera
     source:
-      address: "0x00000000000000000000000000000000005e033e"
+      address: "0x00000000000000000000000000000000005e465b"
       abi: PriceFeed
-      startBlock: 20893635
+      startBlock: 21057157
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

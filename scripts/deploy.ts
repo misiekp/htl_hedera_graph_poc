@@ -14,7 +14,7 @@ async function main() {
 
     const operatorId = AccountId.fromString(process.env.HEDERA_OPERATOR_ID);
     const privateKeyString = process.env.HEDERA_OPERATOR_KEY;
-    
+
     const operatorKey = privateKeyString.startsWith('0x') 
         ? PrivateKey.fromStringECDSA(privateKeyString.slice(2))
         : PrivateKey.fromStringECDSA(privateKeyString);
@@ -40,7 +40,7 @@ async function main() {
             )
         ]) as TransactionResponse;
         console.log("Transaction executed, getting receipt...");
-        
+
         const receipt = await Promise.race([
             txResponse.getReceipt(client),
             new Promise<never>((_, reject) => 
@@ -72,23 +72,23 @@ async function main() {
         const mirrorNodeUrl = `https://testnet.mirrornode.hedera.com/api/v1/blocks?timestamp=gte:${consensusTimestamp}&order=asc&limit=1`;
         const response = await fetch(mirrorNodeUrl);
         const data = await response.json();
-        
+
         if (data.blocks && data.blocks.length > 0) {
             const block = data.blocks[0];
 
             const subgraphYamlPath = path.join(__dirname, "../subgraph/subgraph.yaml");
             let subgraphYaml = fs.readFileSync(subgraphYamlPath, "utf8");
-            
+
             subgraphYaml = subgraphYaml.replace(
                 /startBlock:.*/,
                 `startBlock: ${block.number}`
             );
-            
+
             subgraphYaml = subgraphYaml.replace(
                 /address:.*/,
                 `address: "${evmAddress}"`
             );
-            
+
             fs.writeFileSync(subgraphYamlPath, subgraphYaml);
             console.log("Updated subgraph.yaml with:");
             console.log("- Start Block:", block.number);
@@ -96,22 +96,6 @@ async function main() {
         } else {
             console.log("\nBlock information not found for timestamp:", consensusTimestamp);
         }
-
-        
-        const envPath = path.join(__dirname, "../.env");
-        let envContent = fs.readFileSync(envPath, "utf8");
-        
-        if (envContent.includes("CONTRACT_ID=")) {
-            envContent = envContent.replace(
-                /CONTRACT_ID=.*/,
-                `CONTRACT_ID=${newContractId?.toString()}`
-            );
-        } else {
-            envContent += `\nCONTRACT_ID=${newContractId?.toString()}`;
-        }
-        
-        fs.writeFileSync(envPath, envContent);
-        console.log("Updated .env file with new contract ID");
 
         process.exit(0);
     } catch (error) {
